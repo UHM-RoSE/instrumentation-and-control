@@ -122,34 +122,34 @@ endif
 
 # Add inputs and outputs from these tool invocations to the build variables 
 EXE_OUTPUTS += \
-test.out \
+EPS.out \
 
 EXE_OUTPUTS__QUOTED += \
-"test.out" \
+"EPS.out" \
 
 BIN_OUTPUTS += \
-test.hex \
+EPS.hex \
 
 BIN_OUTPUTS__QUOTED += \
-"test.hex" \
+"EPS.hex" \
 
 
 # All Target
 all: $(OBJS) $(LD_SRCS) $(GEN_CMDS)
-	@$(MAKE) --no-print-directory -Onone "test.out"
+	@$(MAKE) --no-print-directory -Onone "EPS.out"
 
 # Tool invocations
-test.out: $(OBJS) $(LD_SRCS) $(GEN_CMDS)
+EPS.out: $(OBJS) $(LD_SRCS) $(GEN_CMDS)
 	@echo 'Building target: "$@"'
 	@echo 'Invoking: GNU Linker'
-	"/Applications/ti/ccs1040/ccs/tools/compiler/msp430-gcc-9.3.1.11_macos/bin/msp430-elf-gcc-9.3.1" -mhwmult=f5series -Og -g -gdwarf-3 -gstrict-dwarf -Wall -mcode-region=none -mlarge -Wl,-Map,"test.map" -Wl,--gc-sections -L"/Applications/ti/ccs1040/ccs/ccs_base/msp430/include_gcc" -mmcu=msp430fr6989 -o"test.out" $(ORDERED_OBJS)
+	"/Applications/ti/ccs1040/ccs/tools/compiler/msp430-gcc-9.3.1.11_macos/bin/msp430-elf-gcc-9.3.1" -mhwmult=f5series -Og -g -gdwarf-3 -gstrict-dwarf -Wall -mcode-region=none -mlarge -Wl,-Map,"EPS.map" -Wl,--gc-sections -L"/Applications/ti/ccs1040/ccs/ccs_base/msp430/include_gcc" -mmcu=msp430fr6989 -o"EPS.out" $(ORDERED_OBJS)
 	@echo 'Finished building target: "$@"'
 	@echo ' '
 
-test.hex: $(EXE_OUTPUTS)
+EPS.hex: $(EXE_OUTPUTS)
 	@echo 'Building secondary target: "$@"'
 	@echo 'Invoking: GNU Objcopy Utility'
-	"/Applications/ti/ccs1040/ccs/tools/compiler/msp430-gcc-9.3.1.11_macos/bin/msp430-elf-objcopy"  $(EXE_OUTPUTS__QUOTED) "test.hex"
+	"/Applications/ti/ccs1040/ccs/tools/compiler/msp430-gcc-9.3.1.11_macos/bin/msp430-elf-objcopy"  $(EXE_OUTPUTS__QUOTED) "EPS.hex"
 	@echo 'Finished building secondary target: "$@"'
 	@echo ' '
 
