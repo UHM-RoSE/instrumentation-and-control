@@ -44,79 +44,80 @@ void setPDMOn(unsigned char value_);
 void setPDMOff(unsigned char value_);
 void epsReset(void);
 void uartTx(unsigned char* buffer_, int size);
+void systemInit(void);
 
 /******************************************************************************
  * @brief  Global Variables
  *****************************************************************************/
 unsigned int rx_count = 0;
-unsigned char rx_buffer[3];
-unsigned char two_byte[2];
-unsigned char four_byte[4];
+unsigned char rx_buffer[3] = {0x00, 0x00, 0x00};
+unsigned char two_byte[2] = {0x00, 0x00};
+unsigned char four_byte[4] = {0x00, 0x00, 0x00, 0x00};
 
-unsigned char board_status[2];
-unsigned char last_error[2];
-unsigned char version[2];
+unsigned char board_status[2] = {0x00, 0x00};
+unsigned char last_error[2] = {0x00, 0x00};
+unsigned char version[2] = {0x00, 0x00};
 
-unsigned char vbmm1[2];
-unsigned char ibmm1[2];
-unsigned char vbmm2[2];
-unsigned char ibmm2[2];
-unsigned char vbmm3[2];
-unsigned char ibmm3[2];
+unsigned char vbmm1[2] = {0x00, 0x00};
+unsigned char ibmm1[2] = {0x00, 0x00};
+unsigned char vbmm2[2] = {0x00, 0x00};
+unsigned char ibmm2[2] = {0x00, 0x00};
+unsigned char vbmm3[2] = {0x00, 0x00};
+unsigned char ibmm3[2] = {0x00, 0x00};
 
-unsigned char iidiode_out[2];
-unsigned char vidiode_out[2];
-unsigned char i3v3_drw[2];
-unsigned char i5v_drw[2];
+unsigned char iidiode_out[2] = {0x00, 0x00};
+unsigned char vidiode_out[2] = {0x00, 0x00};
+unsigned char i3v3_drw[2] = {0x00, 0x00};
+unsigned char i5v_drw[2] = {0x00, 0x00};
 
-unsigned char ipcm12v[2];
-unsigned char vpcm12v[2];
-unsigned char ipcmbatv[2];
-unsigned char vpcmbatv[2];
-unsigned char ipcm5v[2];
-unsigned char vpcm5v[2];
-unsigned char ipcm3v3[2];
-unsigned char vpcm3v3[2];
+unsigned char ipcm12v[2] = {0x00, 0x00};
+unsigned char vpcm12v[2] = {0x00, 0x00};
+unsigned char ipcmbatv[2] = {0x00, 0x00};
+unsigned char vpcmbatv[2] = {0x00, 0x00};
+unsigned char ipcm5v[2] = {0x00, 0x00};
+unsigned char vpcm5v[2] = {0x00, 0x00};
+unsigned char ipcm3v3[2] = {0x00, 0x00};
+unsigned char vpcm3v3[2] = {0x00, 0x00};
 
-unsigned char vsw1[2];
-unsigned char isw1[2];
-unsigned char vsw2[2];
-unsigned char isw2[2];
-unsigned char vsw3[2];
-unsigned char isw3[2];
-unsigned char vsw4[2];
-unsigned char isw4[2];
-unsigned char vsw5[2];
-unsigned char isw5[2];
-unsigned char vsw6[2];
-unsigned char isw6[2];
-unsigned char vsw7[2];
-unsigned char isw7[2];
-unsigned char vsw8[2];
-unsigned char isw8[2];
-unsigned char vsw9[2];
-unsigned char isw9[2];
-unsigned char vsw10[2];
-unsigned char isw10[2];
+unsigned char vsw1[2] = {0x00, 0x00};
+unsigned char isw1[2] = {0x00, 0x00};
+unsigned char vsw2[2] = {0x00, 0x00};
+unsigned char isw2[2] = {0x00, 0x00};
+unsigned char vsw3[2] = {0x00, 0x00};
+unsigned char isw3[2] = {0x00, 0x00};
+unsigned char vsw4[2] = {0x00, 0x00};
+unsigned char isw4[2] = {0x00, 0x00};
+unsigned char vsw5[2] = {0x00, 0x00};
+unsigned char isw5[2] = {0x00, 0x00};
+unsigned char vsw6[2] = {0x00, 0x00};
+unsigned char isw6[2] = {0x00, 0x00};
+unsigned char vsw7[2] = {0x00, 0x00};
+unsigned char isw7[2] = {0x00, 0x00};
+unsigned char vsw8[2] = {0x00, 0x00};
+unsigned char isw8[2] = {0x00, 0x00};
+unsigned char vsw9[2] = {0x00, 0x00};
+unsigned char isw9[2] = {0x00, 0x00};
+unsigned char vsw10[2] = {0x00, 0x00};
+unsigned char isw10[2] = {0x00, 0x00};
 
-unsigned char tbrd[2];
+unsigned char tbrd[2] = {0x00, 0x00};
 
-unsigned char watchdog_period[2];
-unsigned char pdm_expected[4];
-unsigned char pdm_initial[4];
-unsigned char pdm_actual[4];
+unsigned char watchdog_period[2] = {0x00, 0x00};
+unsigned char pdm_expected[4] = {0x00, 0x00, 0x00, 0x00};
+unsigned char pdm_initial[4] = {0x00, 0x00, 0x00, 0x00};
+unsigned char pdm_actual[4] = {0x00, 0x00, 0x00, 0x00};
 
 /******************************************************************************
  * @brief  Main function
  * @param  none
  * @return int
  *****************************************************************************/
-int main(void)
-{
+int main(void) {
     /* Stop the watchdog timer */
     WDTCTL = WDTPW | WDTHOLD;
 
     /* Start UART Operations */
+    systemInit();
     GPIO_init();
     CLOCK_init();
     UART_init();
@@ -451,12 +452,60 @@ void epsReset(void) {
  *****************************************************************************/
 void uartTx(unsigned char* buffer_, int size) {
     while(size) {
-        while(!(UCA1IFG & UCTXIFG));
+        while(!(UCA0IFG & UCTXIFG));
         UCA0TXBUF = *buffer_;
         buffer_++;
         size--;
     }
     //while(UCA0STAT & UCBUSY);
+}
+
+/******************************************************************************
+ * @brief  System Initiation
+ * @param  none
+ * @return int
+ *****************************************************************************/
+void systemInit(void) {
+    /* Terminate unused GPIOs for Low Power Consumption */
+    P1OUT &= ~(BIT0 + BIT1 + BIT2 + BIT3 + BIT4 + BIT5 + BIT6 + BIT7);
+    P1DIR &= ~(BIT0 + BIT1 + BIT2 + BIT3 + BIT4 + BIT5 + BIT6 + BIT7);
+    P1REN |= (BIT0 + BIT1 + BIT2 + BIT3 + BIT4 + BIT5 + BIT6 + BIT7);
+
+    P2OUT &= ~(BIT0 + BIT1 + BIT2 + BIT3 + BIT4 + BIT5 + BIT6 + BIT7);
+    P2DIR &= ~(BIT0 + BIT1 + BIT2 + BIT3 + BIT4 + BIT5 + BIT6 + BIT7);
+    P2REN |= (BIT0 + BIT1 + BIT2 + BIT3 + BIT4 + BIT5 + BIT6 + BIT7);
+
+    P3OUT &= ~(BIT0 + BIT1 + BIT2 + BIT3 + BIT4 + BIT5 + BIT6 + BIT7);
+    P3DIR &= ~(BIT0 + BIT1 + BIT2 + BIT3 + BIT4 + BIT5 + BIT6 + BIT7);
+    P3REN |= (BIT0 + BIT1 + BIT2 + BIT3 + BIT4 + BIT5 + BIT6 + BIT7);
+
+    P4OUT &= ~(BIT0 + BIT1 + BIT2 + BIT3 + BIT4 + BIT5 + BIT6 + BIT7);
+    P4DIR &= ~(BIT0 + BIT1 + BIT2 + BIT3 + BIT4 + BIT5 + BIT6 + BIT7);
+    P4REN |= (BIT0 + BIT1 + BIT2 + BIT3 + BIT4 + BIT5 + BIT6 + BIT7);
+
+    P5OUT &= ~(BIT0 + BIT1 + BIT2 + BIT3 + BIT4 + BIT5 + BIT6 + BIT7);
+    P5DIR &= ~(BIT0 + BIT1 + BIT2 + BIT3 + BIT4 + BIT5 + BIT6 + BIT7);
+    P5REN |= (BIT0 + BIT1 + BIT2 + BIT3 + BIT4 + BIT5 + BIT6 + BIT7);
+
+    P6OUT &= ~(BIT0 + BIT1 + BIT2 + BIT3 + BIT4 + BIT5 + BIT6 + BIT7);
+    P6DIR &= ~(BIT0 + BIT1 + BIT2 + BIT3 + BIT4 + BIT5 + BIT6 + BIT7);
+    P6REN |= (BIT0 + BIT1 + BIT2 + BIT3 + BIT4 + BIT5 + BIT6 + BIT7);
+
+    P7OUT &= ~(BIT0 + BIT1 + BIT2 + BIT3 + BIT4 + BIT5 + BIT6 + BIT7);
+    P7DIR &= ~(BIT0 + BIT1 + BIT2 + BIT3 + BIT4 + BIT5 + BIT6 + BIT7);
+    P7REN |= (BIT0 + BIT1 + BIT2 + BIT3 + BIT4 + BIT5 + BIT6 + BIT7);
+
+    P8OUT &= ~(BIT0 + BIT1 + BIT2 + BIT3 + BIT4 + BIT5 + BIT6 + BIT7);
+    P8DIR &= ~(BIT0 + BIT1 + BIT2 + BIT3 + BIT4 + BIT5 + BIT6 + BIT7);
+    P8REN |= (BIT0 + BIT1 + BIT2 + BIT3 + BIT4 + BIT5 + BIT6 + BIT7);
+
+    P9OUT &= ~(BIT0 + BIT1 + BIT2 + BIT3 + BIT4 + BIT5 + BIT6 + BIT7);
+    P9DIR &= ~(BIT0 + BIT1 + BIT2 + BIT3 + BIT4 + BIT5 + BIT6 + BIT7);
+    P9REN |= (BIT0 + BIT1 + BIT2 + BIT3 + BIT4 + BIT5 + BIT6 + BIT7);
+
+    P10OUT &= ~(BIT0 + BIT1 + BIT2 + BIT3 + BIT4 + BIT5 + BIT6 + BIT7);
+    P10DIR &= ~(BIT0 + BIT1 + BIT2 + BIT3 + BIT4 + BIT5 + BIT6 + BIT7);
+    P10REN |= (BIT0 + BIT1 + BIT2 + BIT3 + BIT4 + BIT5 + BIT6 + BIT7);
 }
 
 /******************************************************************************
