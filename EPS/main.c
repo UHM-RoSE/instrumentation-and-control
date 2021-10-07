@@ -76,13 +76,115 @@ Access is limited to those with specific rights as a Death Star Development
 employee, and those individuals with a need to know.
 
 ******************************************************************************/
+
+
+/******************************************************************************
+ *   Includes
+ *****************************************************************************/
 #include <msp430.h>
 #include "uart.h"
 
 /******************************************************************************
+ *   Definitions
+ *****************************************************************************/
+#define BOARD_STATUS                          0x01
+#define GET_LAST_ERROR                        0x03
+#define GET_VERSION                           0x04
+#define GET_TELEMETRY                         0x10
+#define GET_WATCHDOG                          0x20
+#define SET_WATCHDOG                          0x21
+#define RESET_WATCHDOG                        0x22
+#define ALL_PDMS_ON                           0x40
+#define ALL_PDMS_OFF                          0x41
+#define GET_PDMS_ACTUAL                       0x42
+#define GET_PDMS_EXPECTED                     0x43
+#define SET_PDM_ON                            0x50
+#define SET_PDM_OFF                           0x51
+#define EPS_RESET                             0x80
+
+/******************************************************************************
  * @brief  Prototype functions
  *****************************************************************************/
+void boardStatus(void);
+void getLastError(void);
+void getVersion(void);
+void getTelemetry(unsigned char value_l, unsigned char value_h);
+void telemetryE1(unsigned char value_l);
+void telemetryE2(unsigned char value_l);
+void telemetryE3(unsigned char value_l);
+void telemetryE4(unsigned char value_l);
+void getWatchdog(void);
+void setWatchdog(unsigned char value_);
+void resetWatchdog(void);
+void allPDMsOn(void);
+void allPDMsOff(void);
+void getPDMsActual(void);
+void getPDMsExpected(void);
+void setPDMOn(unsigned char value_);
+void setPDMOff(unsigned char value_);
+void epsReset(void);
 void BUSY_init(void);
+
+/******************************************************************************
+ * @brief  Global Variables
+ *****************************************************************************/
+unsigned int rx_count = 0;
+unsigned char* rx_buffer = [0x00, 0x00, 0x00];
+unsigned char* two_byte = [0x00, 0x00];
+unsigned char* four_byte = [0x00, 0x00, 0x00, 0x00];
+
+unsigned char* board_status = [0x00, 0x00];
+unsigned char* last_error = [0x00, 0x00];
+unsigned char* version = [0x01, 0x00];
+
+unsigned char* vbmm1 = [0x00, 0x00];
+unsigned char* ibmm1 = [0x00, 0x00];
+unsigned char* vbmm2 = [0x00, 0x00];
+unsigned char* ibmm2 = [0x00, 0x00];
+unsigned char* vbmm3 = [0x00, 0x00];
+unsigned char* ibmm3 = [0x00, 0x00];
+
+unsigned char* iidiode_out = [0x00, 0x00];
+unsigned char* vidiode_out = [0x00, 0x00];
+unsigned char* i3v3_drw = [0x00, 0x00];
+unsigned char* i5v_drw = [0x00, 0x00];
+
+unsigned char* ipcm12v = [0x00, 0x00];
+unsigned char* vpcm12v = [0x00, 0x00];
+unsigned char* ipcmbatv = [0x00, 0x00];
+unsigned char* vpcmbatv = [0x00, 0x00];
+unsigned char* ipcm5v = [0x00, 0x00];
+unsigned char* vpcm5v = [0x00, 0x00];
+unsigned char* ipcm3v3 = [0x00, 0x00];
+unsigned char* vpcm3v3 = [0x00, 0x00];
+
+unsigned char* vsw1 = [0x00, 0x00];
+unsigned char* isw1 = [0x00, 0x00];
+unsigned char* vsw2 = [0x00, 0x00];
+unsigned char* isw2 = [0x00, 0x00];
+unsigned char* vsw3 = [0x00, 0x00];
+unsigned char* isw3 = [0x00, 0x00];
+unsigned char* vsw4 = [0x00, 0x00];
+unsigned char* isw4 = [0x00, 0x00];
+unsigned char* vsw5 = [0x00, 0x00];
+unsigned char* isw5 = [0x00, 0x00];
+unsigned char* vsw6 = [0x00, 0x00];
+unsigned char* isw6 = [0x00, 0x00];
+unsigned char* vsw7 = [0x00, 0x00];
+unsigned char* isw7 = [0x00, 0x00];
+unsigned char* vsw8 = [0x00, 0x00];
+unsigned char* isw8 = [0x00, 0x00];
+unsigned char* vsw9 = [0x00, 0x00];
+unsigned char* isw9 = [0x00, 0x00];
+unsigned char* vsw10 = [0x00, 0x00];
+unsigned char* isw10 = [0x00, 0x00];
+
+unsigned char* tbrd = [0x00, 0x00];
+
+unsigned char* watchdog_period = [0x00, 0x00];
+unsigned char* pdm_expected = [0x00, 0x00, 0x00, 0x00];
+unsigned char* pdm_initial = [0x00, 0x00, 0x00, 0x00];
+unsigned char* pdm_actual = [0x00, 0x00, 0x00, 0x00];
 
 /******************************************************************************
  * @brief  Main function
@@ -105,19 +207,324 @@ int main(void)
      */
     PM5CTL0 &= ~LOCKLPM5;
 
-    /* Load Memory Constants */
-    __delay_cycles(10000000);
-
     /* Enable Interrupts */
     __bis_SR_register(GIE);
 
-    /* Turn off the BUSY */
-    P2OUT ^= BIT7;
-
     /* Enter the Process Loop */
+    while(1) {
+        //fetch internal status data
+    }
 
+    return 0;
+}
 
-    __no_operation();
+/******************************************************************************
+ * @brief  Board Status
+ * @param  none
+ * @return none
+ *****************************************************************************/
+void boardStatus(void) {
+    uartTx(board_status, 2);
+}
+
+/******************************************************************************
+ * @brief  Get Last Error
+ * @param  none
+ * @return none
+ *****************************************************************************/
+void getLastError(void) {
+    uartTx(last_error, 2);
+}
+
+/******************************************************************************
+ * @brief  Get Version
+ * @param  none
+ * @return none
+ *****************************************************************************/
+void getVersion(void) {
+    uartTx(version, 2);
+}
+
+/******************************************************************************
+ * @brief  Get Telemetry
+ * @param  none
+ * @return none
+ *****************************************************************************/
+void getTelemetry(value_l, value_h) {
+    switch(value_h) {
+        case 0xE1:
+            telemetryE1(value_l);
+            break;
+        case 0xE2:
+            telemetryE2(value_l);
+            break;
+        case 0xE3:
+            telemetryE3(value_l);
+            break;
+        case 0xE4:
+            telemetryE4(value_l);
+            break;
+    }
+}
+
+/******************************************************************************
+ * @brief  Telemetry E1
+ * @param  none
+ * @return none
+ *****************************************************************************/
+void telemetryE1(value_l) {
+    switch(value_l) {
+        case 0x10:
+            uartTx(vbmm1, 2);
+            break;
+        case 0x14:
+            uartTx(ibmm1, 2);
+            break;
+        case 0x20:
+            uartTx(vbmm2, 2);
+            break;
+        case 0x24:
+            uartTx(ibmm2, 2);
+            break;
+        case 0x30:
+            uartTx(vbmm3, 2);
+            break;
+        case 0x34:
+            uartTx(ibmm3, 2);
+            break;
+        default:
+            board_status[0] = board_status[0] | 0x01;
+            last_error[0] = 0x13;
+            break;
+    }
+}
+
+/******************************************************************************
+ * @brief  Telemetry E2
+ * @param  none
+ * @return none
+ *****************************************************************************/
+void telemetryE2(value_l) {
+    switch(value_l) {
+        case 0x84:
+            uartTx(iidiode_out, 2);
+            break;
+        case 0x80:
+            uartTx(vidiode_out, 2);
+            break;
+        case 0x05:
+            uartTx(i3v3_drw, 2);
+            break;
+        case 0x15:
+            uartTx(i5v_drw, 2);
+            break;
+        case 0x34:
+            uartTx(ipcm12v, 2);
+            break;
+        case 0x30:
+            uartTx(vpcm12v, 2);
+            break;
+        case 0x24:
+            uartTx(ipcmbatv, 2);
+            break;
+        case 0x20:
+            uartTx(vpcmbatv, 2);
+            break;
+        case 0x14:
+            uartTx(ipcm5v, 2);
+            break;
+        case 0x10:
+            uartTx(vpcm5v, 2);
+            break;
+        case 0x04:
+            uartTx(ipcm3v3, 2);
+            break;
+        case 0x00:
+            uartTx(vpcm3v3, 2);
+            break;
+        default:
+            board_status[0] = board_status[0] | 0x01;
+            last_error[0] = 0x13;
+            break;
+    }
+}
+
+/******************************************************************************
+ * @brief  Telemetry E3
+ * @param  none
+ * @return none
+ *****************************************************************************/
+void telemetryE3(value_l) {
+    if(value_l == 0x08) {
+        uartTx(tbrd, 2);
+    } else {
+        board_status[0] = board_status[0] | 0x01;
+        last_error[0] = 0x13;
+    }
+}
+
+/******************************************************************************
+ * @brief  Telemetry E4
+ * @param  none
+ * @return none
+ *****************************************************************************/
+void telemetryE4(value_l) {
+    switch(value_l) {
+        case 0x10:
+            uartTx(vsw1, 2);
+            break;
+        case 0x14:
+            uartTx(isw1, 2);
+            break;
+        case 0x20:
+            uartTx(vsw2, 2);
+            break;
+        case 0x24:
+            uartTx(isw2, 2);
+            break;
+        case 0x30:
+            uartTx(vsw3, 2);
+            break;
+        case 0x34:
+            uartTx(isw3, 2);
+            break;
+        case 0x40:
+            uartTx(vsw4, 2);
+            break;
+        case 0x44:
+            uartTx(isw4, 2);
+            break;
+        case 0x50:
+            uartTx(vsw5, 2);
+            break;
+        case 0x54:
+            uartTx(isw5, 2);
+            break;
+        case 0x60:
+            uartTx(vsw6, 2);
+            break;
+        case 0x64:
+            uartTx(isw6, 2);
+            break;
+        case 0x70:
+            uartTx(vsw7, 2);
+            break;
+        case 0x74:
+            uartTx(isw7, 2);
+            break;
+        case 0x80:
+            uartTx(vsw8, 2);
+            break;
+        case 0x84:
+            uartTx(isw8, 2);
+            break;
+        case 0x90:
+            uartTx(vsw9, 2);
+            break;
+        case 0x94:
+            uartTx(isw9, 2);
+            break;
+        case 0xA0:
+            uartTx(vsw10, 2);
+            break;
+        case 0xA4:
+            uartTx(isw10, 2);
+            break;
+        default:
+            board_status[0] = board_status[0] | 0x01;
+            last_error[0] = 0x13;
+            break;
+    }
+}
+
+/******************************************************************************
+ * @brief  Get Watchdog
+ * @param  none
+ * @return none
+ *****************************************************************************/
+void getWatchdog(void) {
+    uartTx(watchdog_period, 2);
+}
+
+/******************************************************************************
+ * @brief  Set Watchdog
+ * @param  none
+ * @return none
+ *****************************************************************************/
+void setWatchdog(value_) {
+    //
+}
+
+/******************************************************************************
+ * @brief  Reset Watchdog
+ * @param  none
+ * @return none
+ *****************************************************************************/
+void resetWatchdog(void) {
+    //
+}
+
+/******************************************************************************
+ * @brief  All PDMs ON
+ * @param  none
+ * @return none
+ *****************************************************************************/
+void allPDMsOn(void) {
+    //
+}
+
+/******************************************************************************
+ * @brief  All PDMs OFF
+ * @param  none
+ * @return none
+ *****************************************************************************/
+void allPDMsOff(void) {
+    //
+}
+
+/******************************************************************************
+ * @brief  Get PDMs Actual State
+ * @param  none
+ * @return none
+ *****************************************************************************/
+void getPDMsActual(void) {
+    //
+}
+
+/******************************************************************************
+ * @brief  Get PDMs Expected State
+ * @param  none
+ * @return none
+ *****************************************************************************/
+void getPDMsExpected(void) {
+    //
+}
+
+/******************************************************************************
+ * @brief  Set PDM ON
+ * @param  none
+ * @return none
+ *****************************************************************************/
+void setPDMOn(value_) {
+    //
+}
+
+/******************************************************************************
+ * @brief  Set PDM OFF
+ * @param  none
+ * @return none
+ *****************************************************************************/
+void setPDMOff(value_) {
+    //
+}
+
+/******************************************************************************
+ * @brief  EPS Reset
+ * @param  none
+ * @return none
+ *****************************************************************************/
+void epsReset(void) {
+    //
 }
 
 /******************************************************************************
@@ -132,7 +539,22 @@ void BUSY_init(void) {
 }
 
 /******************************************************************************
- * @brief  UART Interrupt
+ * @brief  BUSY Initialization
+ * @param  none
+ * @return none
+ *****************************************************************************/
+void uartTx(unsigned char* buffer_, int size) {
+    while(size) {
+        while(!(UCA1IFG & UCTXIFG));
+        UCA0TXBUF = *buffer_;
+        buffer_++;
+        size--;
+    }
+    while(UCA0STAT & UCBUSY);
+}
+
+/******************************************************************************
+ * @brief  UART Interrupt Service Routine
  * @param  none
  * @return none
  *****************************************************************************/
@@ -149,8 +571,74 @@ void BUSY_init(void) {
   {
     case USCI_NONE: break;
     case USCI_UART_UCRXIFG:
-      while(!(UCA0IFG&UCTXIFG));
-      UCA0TXBUF = UCA0RXBUF;                                                    // Link to main functions
+      while(!(UCA0IFG & UCTXIFG)) {
+          UCA0IFG = UCA0IFG & (~UCRXIFG);
+          if(rx_count == 0) {
+              rx_count++;
+              rx_buffer[0] = UCA0RXBUF;
+          } else if((rx_buffer[0] == GET_TELEMETRY) && (rx_count == 1)) {
+              rx_count++;
+              rx_buffer[1] = UCA0RXBUF;
+          } else {
+              if(rx_count == 2) {
+                  rx_count = 0;
+                  rx_buffer[2] = UCA0RXBUF;
+              } else {
+                  rx_count = 0;
+                  rx_buffer[1] = UCA0RXBUF;
+              }
+              switch(rx_buffer[0]) {
+                  case BOARD_STATUS:
+                      boardStatus();
+                      break;
+                  case GET_LAST_ERROR:
+                      getLastError();
+                      break;
+                  case GET_VERSION:
+                      getVersion();
+                      break;
+                  case GET_TELEMETRY:
+                      getTelemetry(rx_buffer[1], rx_buffer[2]);
+                      break;
+                  case GET_WATCHDOG:
+                      getWatchdog();
+                      break;
+                  case SET_WATCHDOG:
+                      setWatchdog(rx_buffer[1]);
+                      break;
+                  case RESET_WATCHDOG:
+                      resetWatchdog();
+                      break;
+                  case ALL_PDMS_ON:
+                      allPDMsOn();
+                      break;
+                  case ALL_PDMS_OFF:
+                      allPDMsOff();
+                      break;
+                  case GET_PDMS_ACTUAL:
+                      getPDMsActual();
+                      break;
+                  case GET_PDMS_EXPECTED:
+                      getPDMsExpected();
+                      break;
+                  case SET_PDM_ON:
+                      setPDMOn(rx_buffer[1]);
+                      break;
+                  case SET_PDM_OFF:
+                      setPDMOff(rx_buffer[1]);
+                      break;
+                  case EPS_RESET:
+                      epsReset();
+                      break;
+                  default:
+                      board_status[0] = board_status[0] | 0x01;
+                      last_error[0] = 0x13;
+                      break;
+              }
+              rx_buffer[0] = 0x00;
+              rx_buffer[1] = 0x00;
+          }
+      }
       __no_operation();
       break;
     case USCI_UART_UCTXIFG: break;
