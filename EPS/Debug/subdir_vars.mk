@@ -3,8 +3,8 @@
 ################################################################################
 
 # Add inputs and outputs from these tool invocations to the build variables 
-LD_SRCS += \
-../msp430fr6989.ld 
+CMD_SRCS += \
+../lnk_msp430fr6989.cmd 
 
 C_SRCS += \
 ../main.c \
@@ -15,12 +15,12 @@ C_DEPS += \
 ./uart.d 
 
 OBJS += \
-./main.o \
-./uart.o 
+./main.obj \
+./uart.obj 
 
 OBJS__QUOTED += \
-"main.o" \
-"uart.o" 
+"main.obj" \
+"uart.obj" 
 
 C_DEPS__QUOTED += \
 "main.d" \

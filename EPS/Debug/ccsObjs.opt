@@ -1,1 +1,1 @@
-"./main.o" "./uart.o" -T"../msp430fr6989.ld" -Wl,--start-group -lgcc -lc -Wl,--end-group 
+"./main.obj" "./uart.obj" "../lnk_msp430fr6989.cmd" -llibmpu_init.a -llibmath.a -llibc.a 

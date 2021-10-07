@@ -2,20 +2,19 @@
 # Automatically-generated file. Do not edit!
 ################################################################################
 
-CG_TOOL_ROOT := /Applications/ti/ccs1040/ccs/tools/compiler/msp430-gcc-9.3.1.11_macos
+CG_TOOL_ROOT := /Applications/ti/ccs1040/ccs/tools/compiler/ti-cgt-msp430_21.6.0.LTS
 
 GEN_OPTS__FLAG := 
 GEN_CMDS__FLAG := 
 
 ORDERED_OBJS += \
-"./main.o" \
-"./uart.o" \
--T"../msp430fr6989.ld" \
+"./main.obj" \
+"./uart.obj" \
+"../lnk_msp430fr6989.cmd" \
 $(GEN_CMDS__FLAG) \
--Wl,--start-group \
--lgcc \
--lc \
--Wl,--end-group \
+-llibmpu_init.a \
+-llibmath.a \
+-llibc.a \
 
 -include ../makefile.init
 
@@ -135,28 +134,28 @@ BIN_OUTPUTS__QUOTED += \
 
 
 # All Target
-all: $(OBJS) $(LD_SRCS) $(GEN_CMDS)
+all: $(OBJS) $(CMD_SRCS) $(GEN_CMDS)
 	@$(MAKE) --no-print-directory -Onone "EPS.out"
 
 # Tool invocations
-EPS.out: $(OBJS) $(LD_SRCS) $(GEN_CMDS)
+EPS.out: $(OBJS) $(CMD_SRCS) $(GEN_CMDS)
 	@echo 'Building target: "$@"'
-	@echo 'Invoking: GNU Linker'
-	"/Applications/ti/ccs1040/ccs/tools/compiler/msp430-gcc-9.3.1.11_macos/bin/msp430-elf-gcc-9.3.1" -mhwmult=f5series -Og -g -gdwarf-3 -gstrict-dwarf -Wall -mcode-region=none -mlarge -Wl,-Map,"EPS.map" -Wl,--gc-sections -L"/Applications/ti/ccs1040/ccs/ccs_base/msp430/include_gcc" -mmcu=msp430fr6989 -o"EPS.out" $(ORDERED_OBJS)
+	@echo 'Invoking: MSP430 Linker'
+	"/Applications/ti/ccs1040/ccs/tools/compiler/ti-cgt-msp430_21.6.0.LTS/bin/cl430" -vmspx --data_model=restricted --use_hw_mpy=F5 --advice:power=all --advice:hw_config=all --define=__MSP430FR6989__ --define=_MPU_ENABLE --define=_MPU_MANUAL --define=_MPU_SEGB1=0x4800 --define=_MPU_SEGB2=0x4C00 --define=_MPU_SAM1=11 --define=_MPU_SAM2=9 --define=_MPU_SAM3=13 --define=_MPU_SAM0=9 -g --printf_support=minimal --diag_warning=225 --diag_wrap=off --display_error_number --silicon_errata=CPU21 --silicon_errata=CPU22 --silicon_errata=CPU40 -z -m"EPS.map" --heap_size=160 --stack_size=160 --cinit_hold_wdt=on -i"/Applications/ti/ccs1040/ccs/ccs_base/msp430/include" -i"/Applications/ti/ccs1040/ccs/ccs_base/msp430/lib/5xx_6xx_FRxx" -i"/Applications/ti/ccs1040/ccs/ccs_base/msp430/lib/FR59xx" -i"/Applications/ti/ccs1040/ccs/tools/compiler/ti-cgt-msp430_21.6.0.LTS/lib" -i"/Applications/ti/ccs1040/ccs/tools/compiler/ti-cgt-msp430_21.6.0.LTS/include" --priority --reread_libs --define=_MPU_ENABLE --define=_MPU_MANUAL --define=_MPU_SEGB1=0x4800 --define=_MPU_SEGB2=0x4C00 --define=_MPU_SAM1=11 --define=_MPU_SAM2=9 --define=_MPU_SAM3=13 --define=_MPU_SAM0=9 --diag_wrap=off --display_error_number --warn_sections --xml_link_info="EPS_linkInfo.xml" --use_hw_mpy=F5 --rom_model -o "EPS.out" $(ORDERED_OBJS)
 	@echo 'Finished building target: "$@"'
 	@echo ' '
 
 EPS.hex: $(EXE_OUTPUTS)
 	@echo 'Building secondary target: "$@"'
-	@echo 'Invoking: GNU Objcopy Utility'
-	"/Applications/ti/ccs1040/ccs/tools/compiler/msp430-gcc-9.3.1.11_macos/bin/msp430-elf-objcopy"  $(EXE_OUTPUTS__QUOTED) "EPS.hex"
+	@echo 'Invoking: MSP430 Hex Utility'
+	"/Applications/ti/ccs1040/ccs/tools/compiler/ti-cgt-msp430_21.6.0.LTS/bin/hex430" --memwidth=8 --romwidth=8 --diag_wrap=off -o "EPS.hex" $(EXE_OUTPUTS__QUOTED)
 	@echo 'Finished building secondary target: "$@"'
 	@echo ' '
 
 # Other Targets
 clean:
 	-$(RM) $(BIN_OUTPUTS__QUOTED)$(EXE_OUTPUTS__QUOTED)
-	-$(RM) "main.o" "uart.o" 
+	-$(RM) "main.obj" "uart.obj" 
 	-$(RM) "main.d" "uart.d" 
 	-@echo 'Finished clean'
 	-@echo ' '

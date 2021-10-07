@@ -49,62 +49,62 @@ void uartTx(unsigned char* buffer_, int size);
  * @brief  Global Variables
  *****************************************************************************/
 unsigned int rx_count = 0;
-unsigned char* rx_buffer = [0x00, 0x00, 0x00];
-unsigned char* two_byte = [0x00, 0x00];
-unsigned char* four_byte = [0x00, 0x00, 0x00, 0x00];
+unsigned char rx_buffer[3];
+unsigned char two_byte[2];
+unsigned char four_byte[4];
 
-unsigned char* board_status = [0x00, 0x00];
-unsigned char* last_error = [0x00, 0x00];
-unsigned char* version = [0x01, 0x00];
+unsigned char board_status[2];
+unsigned char last_error[2];
+unsigned char version[2];
 
-unsigned char* vbmm1 = [0x00, 0x00];
-unsigned char* ibmm1 = [0x00, 0x00];
-unsigned char* vbmm2 = [0x00, 0x00];
-unsigned char* ibmm2 = [0x00, 0x00];
-unsigned char* vbmm3 = [0x00, 0x00];
-unsigned char* ibmm3 = [0x00, 0x00];
+unsigned char vbmm1[2];
+unsigned char ibmm1[2];
+unsigned char vbmm2[2];
+unsigned char ibmm2[2];
+unsigned char vbmm3[2];
+unsigned char ibmm3[2];
 
-unsigned char* iidiode_out = [0x00, 0x00];
-unsigned char* vidiode_out = [0x00, 0x00];
-unsigned char* i3v3_drw = [0x00, 0x00];
-unsigned char* i5v_drw = [0x00, 0x00];
+unsigned char iidiode_out[2];
+unsigned char vidiode_out[2];
+unsigned char i3v3_drw[2];
+unsigned char i5v_drw[2];
 
-unsigned char* ipcm12v = [0x00, 0x00];
-unsigned char* vpcm12v = [0x00, 0x00];
-unsigned char* ipcmbatv = [0x00, 0x00];
-unsigned char* vpcmbatv = [0x00, 0x00];
-unsigned char* ipcm5v = [0x00, 0x00];
-unsigned char* vpcm5v = [0x00, 0x00];
-unsigned char* ipcm3v3 = [0x00, 0x00];
-unsigned char* vpcm3v3 = [0x00, 0x00];
+unsigned char ipcm12v[2];
+unsigned char vpcm12v[2];
+unsigned char ipcmbatv[2];
+unsigned char vpcmbatv[2];
+unsigned char ipcm5v[2];
+unsigned char vpcm5v[2];
+unsigned char ipcm3v3[2];
+unsigned char vpcm3v3[2];
 
-unsigned char* vsw1 = [0x00, 0x00];
-unsigned char* isw1 = [0x00, 0x00];
-unsigned char* vsw2 = [0x00, 0x00];
-unsigned char* isw2 = [0x00, 0x00];
-unsigned char* vsw3 = [0x00, 0x00];
-unsigned char* isw3 = [0x00, 0x00];
-unsigned char* vsw4 = [0x00, 0x00];
-unsigned char* isw4 = [0x00, 0x00];
-unsigned char* vsw5 = [0x00, 0x00];
-unsigned char* isw5 = [0x00, 0x00];
-unsigned char* vsw6 = [0x00, 0x00];
-unsigned char* isw6 = [0x00, 0x00];
-unsigned char* vsw7 = [0x00, 0x00];
-unsigned char* isw7 = [0x00, 0x00];
-unsigned char* vsw8 = [0x00, 0x00];
-unsigned char* isw8 = [0x00, 0x00];
-unsigned char* vsw9 = [0x00, 0x00];
-unsigned char* isw9 = [0x00, 0x00];
-unsigned char* vsw10 = [0x00, 0x00];
-unsigned char* isw10 = [0x00, 0x00];
+unsigned char vsw1[2];
+unsigned char isw1[2];
+unsigned char vsw2[2];
+unsigned char isw2[2];
+unsigned char vsw3[2];
+unsigned char isw3[2];
+unsigned char vsw4[2];
+unsigned char isw4[2];
+unsigned char vsw5[2];
+unsigned char isw5[2];
+unsigned char vsw6[2];
+unsigned char isw6[2];
+unsigned char vsw7[2];
+unsigned char isw7[2];
+unsigned char vsw8[2];
+unsigned char isw8[2];
+unsigned char vsw9[2];
+unsigned char isw9[2];
+unsigned char vsw10[2];
+unsigned char isw10[2];
 
-unsigned char* tbrd = [0x00, 0x00];
+unsigned char tbrd[2];
 
-unsigned char* watchdog_period = [0x00, 0x00];
-unsigned char* pdm_expected = [0x00, 0x00, 0x00, 0x00];
-unsigned char* pdm_initial = [0x00, 0x00, 0x00, 0x00];
-unsigned char* pdm_actual = [0x00, 0x00, 0x00, 0x00];
+unsigned char watchdog_period[2];
+unsigned char pdm_expected[4];
+unsigned char pdm_initial[4];
+unsigned char pdm_actual[4];
 
 /******************************************************************************
  * @brief  Main function
@@ -133,8 +133,6 @@ int main(void)
     while(1) {
         //fetch internal status data
     }
-
-    return 0;
 }
 
 /******************************************************************************
@@ -169,7 +167,7 @@ void getVersion(void) {
  * @param  none
  * @return none
  *****************************************************************************/
-void getTelemetry(value_l, value_h) {
+void getTelemetry(unsigned char value_l, unsigned char value_h) {
     switch(value_h) {
         case 0xE1:
             telemetryE1(value_l);
@@ -191,7 +189,7 @@ void getTelemetry(value_l, value_h) {
  * @param  none
  * @return none
  *****************************************************************************/
-void telemetryE1(value_l) {
+void telemetryE1(unsigned char value_l) {
     switch(value_l) {
         case 0x10:
             uartTx(vbmm1, 2);
@@ -223,7 +221,7 @@ void telemetryE1(value_l) {
  * @param  none
  * @return none
  *****************************************************************************/
-void telemetryE2(value_l) {
+void telemetryE2(unsigned char value_l) {
     switch(value_l) {
         case 0x84:
             uartTx(iidiode_out, 2);
@@ -273,7 +271,7 @@ void telemetryE2(value_l) {
  * @param  none
  * @return none
  *****************************************************************************/
-void telemetryE3(value_l) {
+void telemetryE3(unsigned char value_l) {
     if(value_l == 0x08) {
         uartTx(tbrd, 2);
     } else {
@@ -287,7 +285,7 @@ void telemetryE3(value_l) {
  * @param  none
  * @return none
  *****************************************************************************/
-void telemetryE4(value_l) {
+void telemetryE4(unsigned char value_l) {
     switch(value_l) {
         case 0x10:
             uartTx(vsw1, 2);
@@ -370,7 +368,7 @@ void getWatchdog(void) {
  * @param  none
  * @return none
  *****************************************************************************/
-void setWatchdog(value_) {
+void setWatchdog(unsigned char value_) {
     //
 }
 
@@ -424,7 +422,7 @@ void getPDMsExpected(void) {
  * @param  none
  * @return none
  *****************************************************************************/
-void setPDMOn(value_) {
+void setPDMOn(unsigned char value_) {
     //
 }
 
@@ -433,7 +431,7 @@ void setPDMOn(value_) {
  * @param  none
  * @return none
  *****************************************************************************/
-void setPDMOff(value_) {
+void setPDMOff(unsigned char value_) {
     //
 }
 
@@ -451,14 +449,14 @@ void epsReset(void) {
  * @param  none
  * @return none
  *****************************************************************************/
-void uartTx(buffer_, size) {
+void uartTx(unsigned char* buffer_, int size) {
     while(size) {
         while(!(UCA1IFG & UCTXIFG));
         UCA0TXBUF = *buffer_;
         buffer_++;
         size--;
     }
-    while(UCA0STAT & UCBUSY);
+    //while(UCA0STAT & UCBUSY);
 }
 
 /******************************************************************************
