@@ -43,7 +43,7 @@ void getPDMsExpected(void);
 void setPDMOn(unsigned char value_);
 void setPDMOff(unsigned char value_);
 void epsReset(void);
-void BUSY_init(void);
+void uartTx(unsigned char* buffer_, int size);
 
 /******************************************************************************
  * @brief  Global Variables
@@ -117,7 +117,6 @@ int main(void)
     WDTCTL = WDTPW | WDTHOLD;
 
     /* Start UART Operations */
-    BUSY_init();
     GPIO_init();
     CLOCK_init();
     UART_init();
@@ -448,22 +447,11 @@ void epsReset(void) {
 }
 
 /******************************************************************************
- * @brief  BUSY Initialization
+ * @brief  UART Tx Send
  * @param  none
  * @return none
  *****************************************************************************/
-void BUSY_init(void) {
-    /* Turn on BUSY */
-    P2DIR |= BIT7;
-    P2OUT |= BIT7;
-}
-
-/******************************************************************************
- * @brief  BUSY Initialization
- * @param  none
- * @return none
- *****************************************************************************/
-void uartTx(unsigned char* buffer_, int size) {
+void uartTx(buffer_, size) {
     while(size) {
         while(!(UCA1IFG & UCTXIFG));
         UCA0TXBUF = *buffer_;
