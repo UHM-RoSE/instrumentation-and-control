@@ -44,7 +44,7 @@ void setPDMOn(unsigned char value_);
 void setPDMOff(unsigned char value_);
 void epsReset(void);
 void uartTx(unsigned char* buffer_, int size);
-void systemInit(void);
+void SYS_init(void);
 
 /******************************************************************************
  * @brief  Global Variables
@@ -56,7 +56,7 @@ unsigned char four_byte[4] = {0x00, 0x00, 0x00, 0x00};
 
 unsigned char board_status[2] = {0x00, 0x00};
 unsigned char last_error[2] = {0x00, 0x00};
-unsigned char version[2] = {0x00, 0x00};
+unsigned char version[2] = {0x10, 0x00};
 
 unsigned char vbmm1[2] = {0x00, 0x00};
 unsigned char ibmm1[2] = {0x00, 0x00};
@@ -117,7 +117,7 @@ int main(void) {
     WDTCTL = WDTPW | WDTHOLD;
 
     /* Start UART Operations */
-    systemInit();
+    SYS_init();
     GPIO_init();
     CLOCK_init();
     UART_init();
@@ -465,7 +465,7 @@ void uartTx(unsigned char* buffer_, int size) {
  * @param  none
  * @return int
  *****************************************************************************/
-void systemInit(void) {
+void SYS_init(void) {
     /* Terminate unused GPIOs for Low Power Consumption */
     P1OUT &= ~(BIT0 + BIT1 + BIT2 + BIT3 + BIT4 + BIT5 + BIT6 + BIT7);
     P1DIR &= ~(BIT0 + BIT1 + BIT2 + BIT3 + BIT4 + BIT5 + BIT6 + BIT7);
